@@ -1,0 +1,9 @@
+.direnv
+*.session
+
+.gradle
+.settings
+eclipse/.metadata/.plugins
+workspace
+
+.classpath
