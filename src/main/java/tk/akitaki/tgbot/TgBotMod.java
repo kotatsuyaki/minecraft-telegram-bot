@@ -13,6 +13,7 @@ import net.minecraftforge.event.ServerChatEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -71,6 +72,15 @@ public class TgBotMod {
         botProcess = new ProcessBuilder(botProcessCmd).start();
     }
 
+    public void onPlayerDeath(EntityPlayer player, String msg) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("event", "player_death");
+        map.put("name", player.getGameProfile().getName());
+        map.put("msg", msg);
+
+        printToBotProcess(map);
+    }
+
     public void onPlayerChat(ServerChatEvent event) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("event", "chat_msg");
@@ -121,8 +131,6 @@ public class TgBotMod {
             try {
                 String line = reader.readLine();
                 while (line != null) {
-                    System.out.println("Received line from bot process: " + line);
-
                     Gson gson = new Gson();
                     HashMap<String, Object> event = gson.fromJson(line, HashMap.class);
 
@@ -173,5 +181,15 @@ public class TgBotMod {
         public void onPlayerChat(ServerChatEvent event) {
             mod.onPlayerChat(event);
         }
+
+        @SubscribeEvent
+        public void onLivingDeath(LivingDeathEvent event) {
+            if (event.entity instanceof EntityPlayer) {
+                mod.onPlayerDeath(
+                    (EntityPlayer)event.entity,
+                    event.source.func_151519_b((EntityPlayer)event.entity).getUnformattedText());
+            }
+        }
     }
 }
+

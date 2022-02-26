@@ -88,6 +88,12 @@ def start():
                 text='`[{}] {}`'.format(event['name'], event['msg']),
                 parse_mode='MarkdownV2'
             )
+        elif event['event'] == 'player_death':
+            bot.send_message(
+                chat_id=CHATID,
+                text='`[{} dieら: {}]`'.format(event['name'], event['msg']),
+                parse_mode='MarkdownV2'
+            )
         else:
             logfile.write('Unknown event of kind "{}"}\n'.format(event['event']))
             logfile.flush()
