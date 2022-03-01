@@ -18,6 +18,7 @@ def id(update: Update, context: CallbackContext):
         return
     context.bot.send_message(
         chat_id=update.effective_chat.id,
+        disable_notification=True,
         text='Chat id is {}'.format(update.effective_chat.id))
 
 def ping(update: Update, context: CallbackContext):
@@ -29,6 +30,7 @@ def ping(update: Update, context: CallbackContext):
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         reply_to_message_id=update.message.message_id,
+        disable_notification=True,
         text='有ら server 有開ら')
 
 def chat_callback(update: Update, context: CallbackContext):
@@ -57,7 +59,10 @@ def start():
     dispatcher: Dispatcher = updater.dispatcher
 
     bot: Bot = updater.bot
-    bot.send_message(chat_id=CHATID, text='`[Server 開ら]`', parse_mode='MarkdownV2')
+    bot.send_message(
+        chat_id=CHATID, text='`[Server 開ら]`',
+        parse_mode='MarkdownV2',
+        disable_notification=True)
 
     dispatcher.add_handler(CommandHandler('id', id))
     dispatcher.add_handler(CommandHandler('ping', ping))
@@ -74,25 +79,29 @@ def start():
             bot.send_message(
                 chat_id=CHATID,
                 text='`[{} 上線ら]`'.format(event['name']),
-                parse_mode='MarkdownV2'
+                parse_mode='MarkdownV2',
+                disable_notification=True
             )
         elif event['event'] == 'player_leave':
             bot.send_message(
                 chat_id=CHATID,
                 text='`[{} 跑路ら]`'.format(event['name']),
-                parse_mode='MarkdownV2'
+                parse_mode='MarkdownV2',
+                disable_notification=True
             )
         elif event['event'] == 'chat_msg':
             bot.send_message(
                 chat_id=CHATID,
                 text='`[{}] {}`'.format(event['name'], event['msg']),
-                parse_mode='MarkdownV2'
+                parse_mode='MarkdownV2',
+                disable_notification=True
             )
         elif event['event'] == 'player_death':
             bot.send_message(
                 chat_id=CHATID,
                 text='`[{} dieら: {}]`'.format(event['name'], event['msg']),
-                parse_mode='MarkdownV2'
+                parse_mode='MarkdownV2',
+                disable_notification=True
             )
         else:
             logfile.write('Unknown event of kind "{}"}\n'.format(event['event']))
