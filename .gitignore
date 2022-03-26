@@ -7,3 +7,5 @@ eclipse/.metadata/.plugins
 workspace
 
 .classpath
+
+bot/target

@@ -66,8 +66,7 @@ public class TgBotMod {
         System.out.println("Starting bot process");
 
         List<String> botProcessCmd = new ArrayList<String>();
-        botProcessCmd.add("python3");
-        botProcessCmd.add("./bot.py");
+        botProcessCmd.add("./bot");
 
         botProcess = new ProcessBuilder(botProcessCmd).start();
     }

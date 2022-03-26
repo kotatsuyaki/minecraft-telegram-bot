@@ -1,0 +1,20 @@
+image: alpine/3.15
+packages:
+  - openjdk8
+  - bash
+  - rustup
+  - gcc
+  - musl-dev
+artifacts:
+  - build/libs/tgbotmod-1.0.jar
+  - bot/target/release/bot
+tasks:
+  - build-jar: |
+      cd mc-tg-bot
+      ./gradlew build
+  - setup-rust: |
+      rustup-init -y
+  - build-bot: |
+      source $HOME/.cargo/env
+      cd mc-tg-bot/bot
+      cargo build --release
