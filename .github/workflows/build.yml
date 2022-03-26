@@ -27,7 +27,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install rust
-        run: rustup-init -y
+        run: |
+          rustup-init -y
+          echo '[net]' >> bot/.cargo.config
+          echo 'retry = 10' >> bot/.cargo.config
       - name: Build
         run: |
           source $HOME/.cargo/env
