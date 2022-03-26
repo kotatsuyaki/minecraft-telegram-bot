@@ -1,0 +1,40 @@
+on:
+  - push
+name: Build artifacts
+jobs:
+  build-jar:
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+      - name: Install dependencies
+        run: apk add git openjdk8 bash
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: |
+          ./gradlew build
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: tgbotmod.jar
+          path: build/libs/tgbotmod-1.0.jar
+  build-bot:
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+      - name: Install dependencies
+        run: apk add git rustup gcc musl-dev
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install rust
+        run: rustup-init -y
+      - name: Build
+        run: |
+          source $HOME/.cargo/env
+          cd bot
+          cargo build --release
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: bot
+          path: bot/target/release/bot
