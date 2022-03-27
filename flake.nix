@@ -8,14 +8,12 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        jdtls = pkgs.callPackage ./jdt-language-server.nix {};
       in
       {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             openjdk8
             maven
-            jdtls
           ];
         };
       });
