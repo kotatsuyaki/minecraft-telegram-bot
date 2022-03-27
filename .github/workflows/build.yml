@@ -12,12 +12,13 @@ jobs:
         uses: actions/checkout@v2
       - name: Build
         run: |
-          ./gradlew build
+          ./gradlew build -Dorg.gradle.internal.http.socketTimeout=300000
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
-          name: tgbotmod.jar
+          name: tgbot-mod-jar
           path: build/libs/tgbotmod-1.0.jar
+
   build-bot:
     runs-on: ubuntu-latest
     container: alpine:latest
@@ -39,5 +40,29 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
-          name: bot
+          name: tgbot-mod-exe
           path: bot/target/release/bot
+  release:
+    needs: [build-bot, build-jar]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download bot artifacts
+        id: download_bot
+        uses: actions/download-artifact@v3
+        with:
+          name: tgbot-mod-exe
+          path: ./bot
+      - name: Download jar artifacts
+        id: download_jar
+        uses: actions/download-artifact@v3
+        with:
+          name: tgbot-mod-jar
+          path: ./tgbotmod.jar
+      - name: Release artifacts
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: latest
+          files: |
+            ${{steps.download_bot.outputs.download-path}}
+            ${{steps.download_jar.outputs.download-path}}
