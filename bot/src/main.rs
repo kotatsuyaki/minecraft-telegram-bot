@@ -70,17 +70,25 @@ async fn main() -> Result<()> {
                 anyhow::Result::<()>::Ok(())
             },
         ))
-        // Send message from minecraft server to telegram group
+        // Send message from telegram group to minecraft server
         .branch(dptree::entry().endpoint(move |msg: Message, _bot: Bot| {
             let out_mtx = out_mtx.clone();
             async move {
+                // replace chars so that they can be displayed properly in game
+                let text: String = msg
+                    .text()
+                    .unwrap_or("")
+                    .chars()
+                    .map(map_char_for_minecraft)
+                    .collect();
+
                 let json_str = serde_json::to_string(&JavaOutEvent {
                     event: "chat_msg".into(),
                     name: msg
                         .from()
                         .and_then(|u| u.username.clone())
                         .unwrap_or("unknown".into()),
-                    msg: msg.text().unwrap_or("").into(),
+                    msg: text,
                 });
                 if json_str.is_err() {
                     return Ok(());
@@ -181,5 +189,14 @@ async fn input_loop(bot: Bot) -> Result<()> {
 async fn send_maybe_report<R: Request>(req: R) {
     if let Err(e) = req.send().await {
         eprintln!("Error sending: {:?}", e);
+    }
+}
+
+fn map_char_for_minecraft(ch: char) -> char {
+    match ch {
+        '？' => '?',
+        '（' => '(',
+        '）' => ')',
+        _ => ch,
     }
 }
