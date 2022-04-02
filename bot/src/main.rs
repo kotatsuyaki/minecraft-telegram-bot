@@ -150,6 +150,11 @@ async fn input_loop(bot: Bot) -> Result<()> {
                 send_maybe_report(req).await;
             }
             JavaEventKind::ChatMsg => {
+                let msg = event
+                    .msg
+                    .as_deref()
+                    .unwrap_or_default()
+                    .replace("\\", "\\\\");
                 let mut req = bot.send_message(
                     std::env::var("CHATID")
                         .context("Unable to get CHATID")
@@ -157,7 +162,7 @@ async fn input_loop(bot: Bot) -> Result<()> {
                     format!(
                         "`[{}] {}`",
                         event.name.as_deref().unwrap_or("<unknown>"),
-                        event.msg.as_deref().unwrap_or_default()
+                        msg
                     ),
                 );
                 req.parse_mode = Some(ParseMode::MarkdownV2);
